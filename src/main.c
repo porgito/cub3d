@@ -26,6 +26,7 @@ int checkext(t_info *info, char *file)
         error(info, "MAP DOESN'T HAVE .cub EXTENSION");
     else if (file[len - 1] != 'b')
         error(info, "MAP DOESN'T HAVE .cub EXTENSION");
+    return (0);
 }
 
 char    *adddir(char *file)
@@ -62,6 +63,8 @@ int main(int ac, char **av)
     checkmap(adddir(av[1]), info);
     info->mapi = (char **)malloc(info->line * sizeof(char *));
     parsemap(adddir(av[1]), info);
+    info->colorc = 151106232;
+    info->colorf = 12072323;
     init_mlx(info);
     printf("C %d,%d,%d\nF %d,%d,%d\n", info->c[0], info->c[1], info->c[2], info->f[0], info->f[1], info->f[2]);
     for (int i = 0; i < info->line; i++)
@@ -71,4 +74,5 @@ int main(int ac, char **av)
     
     printf("\nx spawn: %d, y spawn: %d\n", info->x, info->y);
     printf("line: %d, col: %d, n: %d\n", info->line, info->col, info->getmap);
+    return (0);
 }

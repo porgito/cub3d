@@ -21,14 +21,16 @@ int		color_column(t_info *info)
 	info->ray.drawend = LARGEUR - info->ray.drawstart;
 	i = info->ray.drawend;
 	while (++j < info->ray.drawstart)
+	{
 		info->data.addr[j * info->data.line_length / 4 +
-			info->ray.x] = info->c;
+			info->ray.x] = info->colorc;
+	}
 	if (j <= info->ray.drawend)
 		draw_texture(info, info->ray.x, j);
 	j = i;
 	while (++j < LARGEUR)
 		info->data.addr[j * info->data.line_length / 4 +
-			info->ray.x] = info->f;
+			info->ray.x] = info->colorf;
 	return (0);
 }
 
@@ -52,15 +54,15 @@ void	draw_texture(t_info *info, int x, int y)
 		info->t.texy = (int)info->t.texpos &
 			(info->texture[info->t.texdir].height - 1);
 		info->t.texpos += info->t.step;
-		if (y < LARGEUR && x < HAUTEUR)
-			info->data.addr[y * info->data.line_length / 4 + x] =
-				info->texture[info->t.texdir].addr[info->t.texy *
-					info->texture[info->t.texdir].line_length /
-					4 + info->t.texx];
+//		if (y < LARGEUR && x < HAUTEUR)
+//			info->data.addr[y * info->data.line_length / 4 + x] = info->texture[info->t.texdir].addr[info->t.texy *
+//					info->texture[info->t.texdir].line_length /
+//					4 + info->t.texx];
 	}
+//	printf("pourquoi\n");
 }
 
-void	draw_sprite(t_info *info, int y, int texx, int stripe)
+/*void	draw_sprite(t_info *info, int y, int texx, int stripe)
 {
 	int		d;
 	int		texy;
@@ -78,4 +80,4 @@ void	draw_sprite(t_info *info, int y, int texx, int stripe)
 		}
 		y++;
 	}
-}
+}*/

@@ -32,6 +32,7 @@ int tomap(char *str, t_info *info, int n)
             return (1);
         i++;
     }
+    return (0);
 }
 
 void    newtest(char *str, t_info *info)
@@ -66,9 +67,8 @@ void    checkmap(char *map, t_info *info)
         str = get_next_line(fd);
         if (tomap(str, info, n) == 1)
             error(info, "NO MAP FOUND");
-        if (stockinfo(str, info) == 1)
-            error(info, "PARSING FAILED");
-//        printf("%d : %s", nl, str);
+        stockinfo(str, info);
+//        printf("%d : %s", n, str);
         newtest(str, info);
         n--;
         free(str);

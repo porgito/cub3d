@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jlaurent <jlaurent@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jlaurent <jlaurent@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 10:21:55 by jlaurent          #+#    #+#             */
-/*   Updated: 2021/12/13 11:22:33 by jlaurent         ###   ########.fr       */
+/*   Updated: 2023/07/10 13:33:43 by jlaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "libft.h"
 
-size_t	ft_strlen(const char *str)
+/*size_t	ft_strlen(const char *str)
 {
 	int	i;
 
@@ -20,7 +20,7 @@ size_t	ft_strlen(const char *str)
 	while (str[i] != '\0')
 		i++;
 	return (i);
-}
+}*/
 
 char	*ft_strchr(const char *s, int c)
 {
@@ -41,7 +41,7 @@ char	*ft_strchr(const char *s, int c)
 	return (0);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+/*char	*ft_strjoin(char const *s1, char const *s2)
 {
 	int		i;
 	int		j;
@@ -90,7 +90,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	new[i] = '\0';
 	return (new);
 }
-
+*/
 char	*ft_strdup(const char *src)
 {
 	char	*new;

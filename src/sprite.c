@@ -82,7 +82,7 @@ void	calculs(t_info *info, int i)
 
 
 
-void	sprite(t_info *info)
+/*void	sprite(t_info *info)
 {
 	int i;
 	int y;
@@ -109,4 +109,4 @@ void	sprite(t_info *info)
 			stripe++;
 		}
 	}
-}
+}*/

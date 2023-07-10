@@ -18,11 +18,11 @@ int setinfo(char *str, t_info *info, int o)
 
     i = 0;
     if (findoc(str, '.') == 1 || findoc(str, '/') == 1 || ft_strlen(str) <= 2)
-        return (1);
+        error(info, "PARSING INFO");
     while (str[i] != '.')
         i++;
     if (info->found[o] == 1)
-        return (1);
+        error(info, "PARSING INFO");
     info->pc[o] = ft_substr(str, i, ft_strlen(str) - i);
     info->found[o] = 1;
     printf("%s\n", info->pc[o]);
@@ -43,13 +43,19 @@ int setcolor(char *str, t_info *info, int o)
     if (o == 4)
     {
         while (n < 3)
-            info->f[n++] = ft_atoi(ft_split(ft_substr(str, i, ft_strlen(str) - i), ',')[n]);
+        {
+            info->f[n] = ft_atoi(ft_split(ft_substr(str, i, ft_strlen(str) - i), ',')[n]);
+            n++;
+        }
         info->color = 1;
     }
     if (o == 5)
     {
         while (n < 3)
-            info->c[n++] = ft_atoi(ft_split(ft_substr(str, i, ft_strlen(str) - i), ',')[n]);
+        {
+            info->c[n] = ft_atoi(ft_split(ft_substr(str, i, ft_strlen(str) - i), ',')[n]);
+            n++;
+        }
         info->full = 1;
     }
     return (0);
@@ -104,21 +110,19 @@ int stockinfo(char *str, t_info *info)
     int ret;
 
     if (str[0] == 'N' && str[1] == 'O' && str[2] == ' ')
-        ret = setinfo(str, info, 0);
+        setinfo(str, info, 0);
     else if (str[0] == 'S' && str[1] == 'O' && str[2] == ' ')
-        ret = setinfo(str, info, 1);
+        setinfo(str, info, 1);
     else if (str[0] == 'W' && str[1] == 'E' && str[2] == ' ')
-        ret = setinfo(str, info, 2);
+        setinfo(str, info, 2);
     else if (str[0] == 'E' && str[1] == 'A' && str[2] == ' ')
-        ret = setinfo(str, info, 3);
+        setinfo(str, info, 3);
     else if (str[0] == 'F' && str[1] == ' ')
-        ret = setcolor(str, info, 4);
+        setcolor(str, info, 4);
     else if (str[0] == 'C' && str[1] == ' ')
-        ret = setcolor(str, info, 5);
+        setcolor(str, info, 5);
 //    else if (info->full == 1)
 //        ret = tomap(str, info);
-    if (ret == 1)
-        return (ret);
     ret = infoerror(str, info);
     return (ret);    
 }

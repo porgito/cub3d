@@ -20,7 +20,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 
-#include "../mlx_linux/mlx.h"
+#include "../mlx/mlx.h"
 
 //LIBFT//
 # include "../libft/libft.h"
@@ -126,7 +126,7 @@ typedef struct		s_data
 	int				width;
 	int				height;
 	void			*img2;
-	int				*addr2;
+	void			*addr2;
 }                   t_data;
 
 typedef struct  s_info
@@ -151,6 +151,8 @@ typedef struct  s_info
     int         toomuchspawn;
     int         line;
     int         col;
+	int			colorf;
+	int			colorc;
 	t_data		texture[5];
 	t_data		data;
 	t_ray		ray;

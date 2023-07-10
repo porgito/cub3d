@@ -17,43 +17,36 @@ void	get_texture_adress(t_info *info)
 	info->texture[0].addr = (int *)mlx_get_data_addr(info->texture[0].img,
 			&info->texture[0].bits_per_pixel,
 			&info->texture[0].line_length, &info->texture[0].endian);
-	info->texture[1].addr = (int *)mlx_get_data_addr(info->texture[1].img,
-			&info->texture[1].bits_per_pixel,
-			&info->texture[1].line_length, &info->texture[1].endian);
-	info->texture[2].addr = (int *)mlx_get_data_addr(info->texture[2].img,
-			&info->texture[2].bits_per_pixel,
-			&info->texture[2].line_length, &info->texture[2].endian);
-	info->texture[3].addr = (int *)mlx_get_data_addr(info->texture[3].img,
-			&info->texture[3].bits_per_pixel,
-			&info->texture[3].line_length, &info->texture[3].endian);
-	info->texture[4].addr = (int *)mlx_get_data_addr(info->texture[4].img,
-			&info->texture[4].bits_per_pixel,
-			&info->texture[4].line_length, &info->texture[4].endian);
+//	info->texture[1].addr = (int *)mlx_get_data_addr(info->texture[1].img,
+//			&info->texture[1].bits_per_pixel,
+//			&info->texture[1].line_length, &info->texture[1].endian);
+//	info->texture[2].addr = (int *)mlx_get_data_addr(info->texture[2].img,
+//			&info->texture[2].bits_per_pixel,
+//			&info->texture[2].line_length, &info->texture[2].endian);
+//	info->texture[3].addr = (int *)mlx_get_data_addr(info->texture[3].img,
+//			&info->texture[3].bits_per_pixel,
+//			&info->texture[3].line_length, &info->texture[3].endian);
+//	info->texture[4].addr = (int *)mlx_get_data_addr(info->texture[4].img,
+//			&info->texture[4].bits_per_pixel,
+//			&info->texture[4].line_length, &info->texture[4].endian);
+	printf("test\n");
 }
 
 void	get_texture(t_info *info)
 {
-	if (!(info->texture[0].img = mlx_xpm_file_to_image(info->data.mlx_ptr,
-					info->pc[0], &(info->texture[0].width),
-					&(info->texture[0].height))))
-		error(info, "Texture SO\n");
-	if (!(info->texture[1].img = mlx_xpm_file_to_image(info->data.mlx_ptr,
-					info->pc[1], &(info->texture[1].width),
-					&(info->texture[1].height))))
-		error(info, "Texture NO\n");
-	if (!(info->texture[2].img = mlx_xpm_file_to_image(info->data.mlx_ptr,
-					info->pc[3], &(info->texture[2].width),
-					&(info->texture[2].height))))
-		error(info, "Texture EA\n");
-	if (!(info->texture[3].img = mlx_xpm_file_to_image(info->data.mlx_ptr,
-					info->pc[4], &(info->texture[3].width),
-					&(info->texture[3].height))))
-		error(info, "Texture WE\n");
-//	if (!(info->texture[4].img = mlx_xpm_file_to_image(info->data.mlx_ptr,
+	int	w;
+	int h;
+
+	info->texture[0].img = mlx_xpm_file_to_image(info->data.mlx_ptr,info->pc[0], &w, &h);
+	info->texture[1].img = mlx_xpm_file_to_image(info->data.mlx_ptr,info->pc[1], &w, &h);
+	info->texture[2].img = mlx_xpm_file_to_image(info->data.mlx_ptr,info->pc[2], &w, &h);
+	info->texture[3].img = mlx_xpm_file_to_image(info->data.mlx_ptr,info->pc[3], &w, &h);
+//	info->texture[4].img = mlx_xpm_file_to_image(info->data.mlx_ptr,
 //					info->sp, &(info->texture[4].width),
 //					&(info->texture[4].height))))
-		error(info, "Texture S\n");
-	get_texture_adress(info);
+	printf("before\n");
+//	get_texture_adress(info);
+	printf("texture ok \n");
 }
 
 int		raycasting(t_info *info)
@@ -67,7 +60,7 @@ int		raycasting(t_info *info)
 		info->s.zbuffer[info->ray.x] = info->ray.perpwalldist;
 		info->ray.x++;
 	}
-	sprite(info);
+//	sprite(info);
 	mlx_put_image_to_window(info->data.mlx_ptr, info->data.mlx_win,
 			info->data.img, 0, 0);
 	forward_back(info);
@@ -82,6 +75,7 @@ int		init_mlx(t_info *info)
 	init2(info);
 	if (!(info->data.mlx_ptr = mlx_init()))
 		error(info, "Mlx init impossible\n");
+		printf("test\n");
 	get_texture(info);
 	info->data.img = mlx_new_image(info->data.mlx_ptr, HAUTEUR, LARGEUR);
 	info->data.addr = (int *)mlx_get_data_addr(info->data.img, &info->data.

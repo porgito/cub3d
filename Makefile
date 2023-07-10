@@ -1,24 +1,24 @@
 SRCS	=	src/main.c src/checkmap.c src/initstruct.c src/stockinfo.c \
 			src/utils.c src/parsemap.c src/initraycast.c src/error.c src/hook.c \
 			src/utils2.c src/move.c src/raycasting.c src/initraycast2.c \
-			src/draw.c src/sprite.c
+			src/draw.c src/sprite.c libft/ft_strlen.c libft/ft_strjoin.c libft/ft_substr.c \
+			libft/ft_atoi.c libft/ft_split.c libft/get_next_line.c libft/get_next_line_utils.c
 
 OBJS	= ${SRCS:.c=.o}
 
-CC	= gcc
+GCC		= gcc -Wall -Werror -Wextra -I./mlx -Lmlx -lmlx
 
-RM	= rm -f
+FW		= -framework OpenGL -framework AppKit
+
+RM		= rm -f
 
 NAME	= test
 
 
 all:		${NAME}
 
-%.o: %.c
-	$(CC) -I./libft -I/usr/include -Imlx_linux -O3 -c $< -o $@
-
-$(NAME): $(OBJS)
-	$(CC) $(OBJS) -L./libft -lft -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
+${NAME}:	${OBJS}
+						${GCC} ${FW} -o ${NAME} ${OBJS}
 
 clean:
 						${RM} ${OBJS}

@@ -28,6 +28,7 @@ void	init2(t_info *info)
 	info->ray.diry = 0;
 	info->ray.planx = 0;
 	info->ray.plany = 0;
+
 	init_dir(info);
 }
 

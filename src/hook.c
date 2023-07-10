@@ -15,11 +15,20 @@
 int		key_press(int keycode, t_info *info)
 {
 	if (keycode == FORWARD)
+	{
 		info->data.forward = 1;
+		printf("FORWARD\n");
+	}
 	else if (keycode == BACK)
+	{	
 		info->data.back = 1;
+		printf("BACK\n");
+	}
 	else if (keycode == LEFT)
+	{
+		printf("LEFT\n");
 		info->data.left = 1;
+	}
 	else if (keycode == RIGHT)
 		info->data.right = 1;
 	else if (keycode == ROTATE_L)
