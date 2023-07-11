@@ -154,6 +154,7 @@ void			init_raycasting_info(t_info *info, t_ray *r, int x);
 void			init_side_dist(t_info *info, t_ray *r);
 void			init_perp_dist(t_info *info, t_ray *r);
 void			init_draw_ypoints(t_ray *r);
+static void		init_texture_info(t_info *info, char **texture, int texture_id);
 
 int             stockinfo(char *str, t_info *info);
 int             findoc(char *str, char oc);
@@ -184,6 +185,7 @@ void			rotate_right(t_info *info);
 static int		is_redrange(t_info *info, int w, int h);
 static void		painting_minimap(t_info *info, int w, int h);
 void			paint_minimap(t_info *info, int width, int height);
+
 
 void			error(t_info *info, char *str);
 void			error2(t_info *info);
