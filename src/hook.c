@@ -12,45 +12,37 @@
 
 #include "../inc/cub3d.h"
 
-int		key_press(int keycode, t_info *info)
+static void	adjust_pos_range(t_info *info)
 {
-	if (keycode == FORWARD)
-	{
-		info->data.forward = 1;
-		printf("FORWARD\n");
-	}
-	else if (keycode == BACK)
-	{	
-		info->data.back = 1;
-		printf("BACK\n");
-	}
-	else if (keycode == LEFT)
-	{
-		printf("LEFT\n");
-		info->data.left = 1;
-	}
-	else if (keycode == RIGHT)
-		info->data.right = 1;
-	else if (keycode == ROTATE_L)
-		info->data.rotate_left = 1;
-	else if (keycode == ROTATE_R)
-		info->data.rotate_right = 1;
-	return (1);
+	if (info->mapi[(int)(info->pos_y + 0.01)][(int)info->pos_x] == '1')
+		info->pos_y -= 0.01;
+	else if (info->mapi[(int)(info->pos_y - 0.01)][(int)info->pos_x] == '1')
+		info->pos_y += 0.01;
+	else if (info->mapi[(int)info->pos_y][(int)(info->pos_x + 0.01)] == '1')
+		info->pos_x -= 0.01;
+	else if (info->mapi[(int)info->pos_y][(int)(info->pos_x - 0.01)] == '1')
+		info->pos_x += 0.01;
 }
 
-int		key_release(int keycode, t_info *info)
+int	key_hook(int keycode, t_info *info)
 {
-	if (keycode == FORWARD)
-		info->data.forward = 0;
+	if (keycode == ESC)
+	{
+		mlx_destroy_window(info->mlx, info->win);
+		exit(0);
+	}
+	else if (keycode == FORWARD)
+		move_up(info);
 	else if (keycode == BACK)
-		info->data.back = 0;
-	else if (keycode == LEFT)
-		info->data.left = 0;
+		move_down(info);
 	else if (keycode == RIGHT)
-		info->data.right = 0;
+		move_left(info);
+	else if (keycode == LEFT)
+		move_right(info);
 	else if (keycode == ROTATE_L)
-		info->data.rotate_left = 0;
+		rotate_left(info);
 	else if (keycode == ROTATE_R)
-		info->data.rotate_right = 0;
-	return (1);
+		rotate_right(info);
+	adjust_pos_range(info);
+	return (0);
 }

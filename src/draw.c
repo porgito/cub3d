@@ -5,79 +5,91 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jlaurent <jlaurent@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/07 20:40:19 by jlaurent          #+#    #+#             */
-/*   Updated: 2023/07/07 20:40:19 by jlaurent         ###   ########.fr       */
+/*   Created: 2023/07/11 21:42:14 by jlaurent          #+#    #+#             */
+/*   Updated: 2023/07/11 21:42:14 by jlaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-int		color_column(t_info *info)
+void	my_mlx_pixel_put(t_info *info, int x, int y, int color)
 {
-	int j;
-	int i;
+	char	*dst;
 
-	j = -1;
-	info->ray.drawend = LARGEUR - info->ray.drawstart;
-	i = info->ray.drawend;
-	while (++j < info->ray.drawstart)
+	dst = info->img.addr + (y * info->img.len + x * (info->img.bpp / 8));
+	*(unsigned int *)dst = color;
+}
+
+static void	paint_bg(t_info *info)
+{
+	int	w;
+	int	h;
+
+	h = -1;
+	while (++h < HAUTEUR)
 	{
-		info->data.addr[j * info->data.line_length / 4 +
-			info->ray.x] = info->colorc;
+		w = -1;
+		while (++w < LARGEUR)
+		{
+			if (h < HAUTEUR / 2)
+				my_mlx_pixel_put(info, w, h, info->ceiling);
+			else
+				my_mlx_pixel_put(info, w, h, info->floor);
+		}
 	}
-	if (j <= info->ray.drawend)
-		draw_texture(info, info->ray.x, j);
-	j = i;
-	while (++j < LARGEUR)
-		info->data.addr[j * info->data.line_length / 4 +
-			info->ray.x] = info->colorf;
+}
+
+static void	paint_walls(t_info *info, t_texture *texture, t_ray *r, int x)
+{
+	int	y;
+	int	color;
+
+	r->tex_step = 1.0 * info->texture->img_height / r->line_height;
+	r->tex_pos = (r->draw_start - HAUTEUR / 2 \
+		+ r->line_height / 2) * r->tex_step;
+	y = r->draw_start - 1;
+	texture->colors = (int *)mlx_get_data_addr(texture->img.ptr, \
+		&texture->img.bpp, &texture->img.len, &texture->img.endian);
+	while (++y < r->draw_end)
+	{
+		r->tex_y = (int)r->tex_pos;
+		r->tex_pos += r->tex_step;
+		color = texture->colors[texture->img_height * r->tex_y + r->tex_x];
+		my_mlx_pixel_put(info, x, y, color);
+	}
+}
+
+static void	painting(t_info *info, t_ray *r, int x)
+{
+	if (r->raydir_y < 0 && r->side == Y_SIDE)
+		paint_walls(info, &info->texture[0], r, x);
+	else if (r->raydir_y > 0 && r->side == Y_SIDE)
+		paint_walls(info, &info->texture[1], r, x);
+	else if (r->raydir_x < 0 && r->side == X_SIDE)
+		paint_walls(info, &info->texture[2], r, x);
+	else if (r->raydir_x > 0 && r->side == X_SIDE)
+		paint_walls(info, &info->texture[3], r, x);
+}
+
+int	paint_map(t_info *info)
+{
+	int		x;
+	t_ray	r;
+
+	mlx_clear_window(info->mlx, info->win);
+	paint_bg(info);
+	x = -1;
+	while (++x < LARGEUR)
+	{
+		init_raycasting_info(info, &r, x);
+		init_side_dist(info, &r);
+		raycasting(info, &r);
+		init_perp_dist(info, &r);
+		init_draw_ypoints(&r);
+		if (info->mapi[r.cur_y][r.cur_x] == '1')
+			painting(info, &r, x);
+	}
+	paint_minimap(info, info->map_x * MINIMAP_S, info->map_y * MINIMAP_S);
+	mlx_put_image_to_window(info->mlx, info->win, info->img.ptr, 0, 0);
 	return (0);
 }
-
-void	draw_texture(t_info *info, int x, int y)
-{
-	y = info->ray.drawstart - 1;
-    init_texture(info);
-	info->t.step = 1.0 * info->texture[0].height / info->ray.lineheight;
-	info->t.texx = (int)(info->t.wallx * (double)info->texture
-			[info->t.texdir].width);
-	if (info->ray.side == 0 && info->ray.raydirx > 0)
-		info->t.texx = info->texture[info->t.texdir].width -
-			info->t.texx - 1;
-	if (info->ray.side == 1 && info->ray.raydiry < 0)
-		info->t.texx = info->texture[info->t.texdir].width -
-			info->t.texx - 1;
-	info->t.texpos = (info->ray.drawstart - LARGEUR / 2 +
-			info->ray.lineheight / 2) * info->t.step;
-	while (++y <= info->ray.drawend)
-	{
-		info->t.texy = (int)info->t.texpos &
-			(info->texture[info->t.texdir].height - 1);
-		info->t.texpos += info->t.step;
-//		if (y < LARGEUR && x < HAUTEUR)
-//			info->data.addr[y * info->data.line_length / 4 + x] = info->texture[info->t.texdir].addr[info->t.texy *
-//					info->texture[info->t.texdir].line_length /
-//					4 + info->t.texx];
-	}
-//	printf("pourquoi\n");
-}
-
-/*void	draw_sprite(t_info *info, int y, int texx, int stripe)
-{
-	int		d;
-	int		texy;
-
-	while (y < info->s.drawendy)
-	{
-		d = (y) * 256 - LARGEUR * 128 + info->s.spriteheight * 128;
-		texy = ((d * info->texture[4].height) / info->s.spriteheight) / 256;
-		if (info->texture[4].addr[texy * info->texture[4].line_length / 4 +
-				texx] != -16777216)
-		{
-			info->data.addr[y * info->data.line_length / 4 + stripe] =
-				info->texture[4].addr[texy * info->texture[4].line_length /
-				4 + texx];
-		}
-		y++;
-	}
-}*/

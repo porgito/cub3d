@@ -12,42 +12,62 @@
 
 #include "../inc/cub3d.h"
 
-void	init_dir(t_info *info)
+static void	init_dirplane(t_info *info, int idx)
 {
-	if (info->spawn == 'N')
-		info->ray.dirx = -1;
-	if (info->spawn == 'S')
-		info->ray.dirx = 1;
-	if (info->spawn == 'E')
-		info->ray.diry = 1;
-	if (info->spawn == 'W')
-		info->ray.diry = -1;
-	if (info->spawn == 'N')
-		info->ray.plany = 0.66;
-	if (info->spawn == 'S')
-		info->ray.plany = -0.66;
-	if (info->spawn == 'E')
-		info->ray.planx = 0.66;
-	if (info->spawn == 'W')
-		info->ray.planx = -0.66;
+	const double	dir_x[4] = {0.0, 0.0, -1.0, 1.0};
+	const double	dir_y[4] = {-1.0, 1.0, 0.0, 0.0};
+	const double	plane_x[4] = {0.66, -0.66, 0.0, 0.0};
+	const double	plane_y[4] = {0.0, 0.0, -0.66, 0.66};
+
+	info->p.dir_x = dir_x[idx];
+	info->p.dir_y = dir_y[idx];
+	info->p.plane_x = plane_x[idx];
+	info->p.plane_y = plane_y[idx];
 }
 
-void	init_more(t_info *info)
+void	init_player(t_info *info)
 {
-	if (info->ray.raydiry == 0)
-		info->ray.deltadistx = 0;
-	else if (info->ray.raydirx == 0)
-		info->ray.deltadistx = 1;
+	if (info->spawn == 'N')
+		init_dirplane(info, 0);
+	else if (info->spawn == 'S')
+		init_dirplane(info, 1);
+	else if (info->spawn == 'W')
+		init_dirplane(info, 2);
+	else if (info->spawn == 'E')
+		init_dirplane(info, 3);
+}
+
+void	init_raycasting_info(t_info *info, t_ray *r, int x)
+{
+	r->cur_x = (int)info->pos_x;
+	r->cur_y = (int)info->pos_y;
+	r->cam_x = 2 * x / (double)(LARGEUR) - 1;
+	r->raydir_x = info->p.dir_x + info->p.plane_x * r->cam_x;
+	r->raydir_y = info->p.dir_y + info->p.plane_y * r->cam_x;
+	r->delta_dist_x = fabs(1 / r->raydir_x);
+	r->delta_dist_y = fabs(1 / r->raydir_y);
+}
+
+void	init_side_dist(t_info *info, t_ray *r)
+{
+	if (r->raydir_x > 0)
+	{
+		r->step_x = 1;
+		r->side_dist_x = (r->cur_x + 1 - info->pos_x) * r->delta_dist_x;
+	}	
 	else
-		info->ray.deltadistx = sqrt(1 + (info->ray.raydiry
-			* info->ray.raydiry) / (info->ray.raydirx *
-			info->ray.raydirx));
-	if (info->ray.raydirx == 0)
-		info->ray.deltadisty = 0;
-	else if (info->ray.raydiry == 0)
-		info->ray.deltadisty = 1;
+	{
+		r->step_x = -1;
+		r->side_dist_x = (info->pos_x - r->cur_x) * r->delta_dist_x;
+	}
+	if (r->raydir_y > 0)
+	{
+		r->step_y = 1;
+		r->side_dist_y = (r->cur_y + 1 - info->pos_y) * r->delta_dist_y;
+	}
 	else
-		info->ray.deltadisty = sqrt(1 + (info->ray.raydirx *
-			info->ray.raydirx) / (info->ray.raydiry *
-			info->ray.raydiry));
+	{
+		r->step_y = -1;
+		r->side_dist_y = (info->pos_y - r->cur_y) * r->delta_dist_y;
+	}
 }

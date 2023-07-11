@@ -12,88 +12,76 @@
 
 #include "../inc/cub3d.h"
 
-void	forward_back(t_info *info)
+void	move_up(t_info *info)
 {
-	if (info->data.forward == 1)
-	{
-		if (info->mapi[(int)(info->ray.posx + (info->ray.dirx * info->
-						ray.movespeed * 2))][(int)info->ray.posy] == '0')
-			info->ray.posx += info->ray.dirx * info->ray.movespeed;
-		if (info->mapi[(int)(info->ray.posx)][(int)(info->ray.posy +
-					(info->ray.diry * info->ray.movespeed * 2))] == '0')
-			info->ray.posy += info->ray.diry * info->ray.movespeed;
-	}
-	if (info->data.back == 1)
-	{
-		if (info->mapi[(int)(info->ray.posx - (info->ray.dirx * info->
-						ray.movespeed * 2))][(int)(info->ray.posy)] == '0')
-			info->ray.posx -= info->ray.dirx * info->ray.movespeed;
-		if (info->mapi[(int)(info->ray.posx)][(int)(info->ray.posy -
-					(info->ray.diry * info->ray.movespeed * 2))] == '0')
-			info->ray.posy -= info->ray.diry * info->ray.movespeed;
-	}
+	if (info->mapi[(int)(info->pos_y)] \
+		[(int)(info->pos_x + info->p.dir_x * SPEED)] != '1')
+		info->pos_x += info->p.dir_x * SPEED;
+	if (info->mapi[(int)(info->pos_y \
+		+ info->p.dir_y * SPEED)][(int)(info->pos_x)] != '1')
+		info->pos_y += info->p.dir_y * SPEED;
 }
 
-void	left_right(t_info *info)
+void	move_down(t_info *info)
 {
-	if (info->data.right == 1)
-	{
-		if (info->mapi[(int)(info->ray.posx + info->ray.diry *
-					(info->ray.movespeed * 2))][(int)info->ray.posy] == '0')
-			info->ray.posx += info->ray.diry * info->ray.movespeed;
-		if (info->mapi[(int)info->ray.posx][(int)(info->ray.posy -
-					info->ray.dirx *
-					(info->ray.movespeed * 2))] == '0')
-			info->ray.posy -= info->ray.dirx * info->ray.movespeed;
-	}
-	if (info->data.left == 1)
-	{
-		if (info->mapi[(int)(info->ray.posx - info->ray.diry *
-					(info->ray.movespeed * 2))][(int)info->ray.posy] == '0')
-			info->ray.posx -= info->ray.diry * info->ray.movespeed;
-		if (info->mapi[(int)info->ray.posx][(int)(info->ray.posy +
-					info->ray.dirx *
-					(info->ray.movespeed * 2))] == '0')
-			info->ray.posy += info->ray.dirx * info->ray.movespeed;
-	}
+	if (info->mapi[(int)(info->pos_y)] \
+		[(int)(info->pos_x - info->p.dir_x * SPEED)] != '1')
+		info->pos_x -= info->p.dir_x * SPEED;
+	if (info->mapi[(int)(info->pos_y \
+		- info->p.dir_y * SPEED)][(int)(info->pos_x)] != '1')
+		info->pos_y -= info->p.dir_y * SPEED;
 }
 
-void	rotate_right_left(t_info *info)
+void	move_left(t_info *info)
 {
-	double oldplanx;
-	double olddirx;
-
-	oldplanx = info->ray.planx;
-	olddirx = info->ray.dirx;
-	if (info->data.rotate_right == 1)
-	{
-		info->ray.dirx = info->ray.dirx * cos(-info->ray.rotspeed / 2) -
-			info->ray.diry * sin(-info->ray.rotspeed / 2);
-		info->ray.diry = olddirx * sin(-info->ray.rotspeed / 2) +
-			info->ray.diry * cos(-info->ray.rotspeed / 2);
-		info->ray.planx = info->ray.planx * cos(-info->ray.rotspeed / 2)
-			- info->ray.plany * sin(-info->ray.rotspeed / 2);
-		info->ray.plany = oldplanx * sin(-info->ray.rotspeed / 2) +
-			info->ray.plany * cos(-info->ray.rotspeed / 2);
-	}
-	rotate_left(info, olddirx);
+	if (info->mapi[(int)(info->pos_y)]
+		[(int)(info->pos_x + info->p.plane_x * SPEED)] != '1')
+		info->pos_x += info->p.plane_x * SPEED;
+	if (info->mapi[(int)(info->pos_y \
+		+ info->p.plane_y * SPEED)][(int)(info->pos_x)] != '1')
+		info->pos_y += info->p.plane_y * SPEED;
 }
 
-void	rotate_left(t_info *info, double olddirx)
+void	move_right(t_info *info)
 {
-	double oldplanex;
+	if (info->mapi[(int)(info->pos_y)] \
+		[(int)(info->pos_x - info->p.plane_x * SPEED)] != '1')
+		info->pos_x -= info->p.plane_x * SPEED;
+	if (info->mapi[(int)(info->pos_y \
+		- info->p.plane_y * SPEED)][(int)(info->pos_x)] != '1')
+			info->pos_y -= info->p.plane_y * SPEED;
+}
 
-	if (info->data.rotate_left == 1)
-	{
-		olddirx = info->ray.dirx;
-		oldplanex = info->ray.planx;
-		info->ray.dirx = info->ray.dirx * cos(info->ray.rotspeed / 2) -
-			info->ray.diry * sin(info->ray.rotspeed / 2);
-		info->ray.diry = olddirx * sin(info->ray.rotspeed / 2) + info->
-			ray.diry * cos(info->ray.rotspeed / 2);
-		info->ray.planx = info->ray.planx * cos(info->ray.rotspeed / 2) -
-			info->ray.plany * sin(info->ray.rotspeed / 2);
-		info->ray.plany = oldplanex * sin(info->ray.rotspeed / 2) +
-			info->ray.plany * cos(info->ray.rotspeed / 2);
-	}
+void	rotate_left(t_info *info)
+{
+	double	olddir_x;
+	double	oldplane_x;
+
+	olddir_x = info->p.dir_x;
+	info->p.dir_x = info->p.dir_x \
+		* cos(info->angle) + info->p.dir_y * sin(info->angle);
+	info->p.dir_y = -olddir_x \
+		* sin(info->angle) + info->p.dir_y * cos(info->angle);
+	oldplane_x = info->p.plane_x;
+	info->p.plane_x = info->p.plane_x \
+		* cos(info->angle) + info->p.plane_y * sin(info->angle);
+	info->p.plane_y = -oldplane_x \
+		* sin(info->angle) + info->p.plane_y * cos(info->angle);
+}
+
+void	rotate_right(t_info *info)
+{
+	double	olddir_x;
+	double	oldplane_x;
+
+	olddir_x = info->p.dir_x;
+	info->p.dir_x = info->p.dir_x \
+		* cos(info->angle) - info->p.dir_y * sin(info->angle);
+	info->p.dir_y = olddir_x \
+		* sin(info->angle) + info->p.dir_y * cos(info->angle);
+	oldplane_x = info->p.plane_x;
+	info->p.plane_x = info->p.plane_x
+		* cos(info->angle) - info->p.plane_y * sin(info->angle);
+	info->p.plane_y = oldplane_x
+		* sin(info->angle) + info->p.plane_y * cos(info->angle);
 }

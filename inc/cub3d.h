@@ -36,98 +36,75 @@
 # define RIGHT		2
 # define ROTATE_L	123
 # define ROTATE_R	124
+# define ESC	53
+# define SPEED		0.2
+# define PI 		3.141592
+# define X_SIDE 	0
+# define Y_SIDE 	1
+# define MINIMAP_S	10
 
 //STRUCT//
 
-typedef struct		s_sprxy
+typedef struct s_img
 {
-	double			x;
-	double			y;
-}					t_sprxy;
+	void	*ptr;
+	char	*addr;
+	int		bpp;
+	int		len;
+	int		endian;
+}	t_img;
 
-typedef struct		s_sprite
+typedef struct s_texture
 {
-	int				nbspr;
-	int				*order;
-	double			*dist;
-	double			spritex;
-	double			spritey;
-	double			invdet;
-	double			transformx;
-	double			transformy;
-	int				spritescreenx;
-	int				spriteheight;
-	int				drawstartx;
-	int				drawstarty;
-	int				drawendy;
-	int				drawendx;
-	int				spritewidth;
-	double			*zbuffer;
-}					t_sprite;
+	t_img	img;
+	char	*file_name;
+	int		*colors;
+	int		img_width;
+	int		img_height;
+}	t_texture;
 
-typedef struct		s_texture
+typedef struct s_map
 {
-	int				texdir;
-	double			wallx;
-	int				texx;
-	int				texy;
-	double			step;
-	double			texpos;
-}					t_texture;
-
-typedef struct		s_ray
-{
-	double			posx;
-	double			posy;
-	double			dirx;
-	double			diry;
-	double			planx;
-	double			plany;
-	double			raydirx;
-	double			raydiry;
-	double			camerax;
-	int				mapx;
-	int				mapy;
-	double			sidedistx;
-	double			sidedisty;
-	double			deltadistx;
-	double			deltadisty;
-
-	int				stepx;
-	int				stepy;
-	int				hit;
-	int				side;
-	double			perpwalldist;
-	int				lineheight;
-	int				drawstart;
-	int				drawend;
-	double			movespeed;
-	double			rotspeed;
-	int				x;
-	int				texture;
-}					t_ray;
-
-typedef struct		s_data
-{
-	void			*mlx_ptr;
-	void			*mlx_win;
-	void			*img;
-	int				*addr;
-	int				bits_per_pixel;
-	int				line_length;
-	int				endian;
-	int				forward;
-	int				back;
-	int				left;
-	int				right;
-	int				rotate_left;
-	int				rotate_right;
-	int				minimapechelle;
-	int				width;
 	int				height;
-	void			*img2;
-	void			*addr2;
-}                   t_data;
+	int				width;
+	char			*str;
+	struct s_map	*next;
+}	t_map;
+
+typedef struct s_player
+{
+	double	dir_x;
+	double	dir_y;
+	double	plane_x;
+	double	plane_y;
+}	t_player;
+
+typedef struct s_ray
+{
+	int		cur_x;
+	int		cur_y;
+	double	cam_x;
+	double	raydir_x;
+	double	raydir_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	perp_wall_dist;
+	int		step_x;
+	int		step_y;
+	int		hit;
+	int		side;
+	int		line_height;
+	int		draw_start;
+	int		draw_end;
+	int		wall_id;
+	double	wall_x;
+	int		tex_x;
+	int		tex_y;
+	double	tex_pos;
+	double	tex_step;
+}	t_ray;
 
 typedef struct  s_info
 {
@@ -146,25 +123,38 @@ typedef struct  s_info
     int         nl;
     int         getmap;
     int         spawn;
-    int         x;
-    int         y;
     int         toomuchspawn;
     int         line;
     int         col;
 	int			colorf;
 	int			colorc;
-	t_data		texture[5];
-	t_data		data;
-	t_ray		ray;
-	t_texture	t;
-	t_sprite	s;
-	t_sprxy	    *sxy;
+	void		*mlx;
+	void		*win;
+	t_img		img;
+	t_player	p;
+	int			map_x;
+	int			map_y;
+	double		pos_x;
+	double		pos_y;
+	double		angle;
+	int			floor;
+	int			ceiling;
+	t_texture	texture[4];
 }               t_info;
 
 //FONCTIONS//
 void            checkmap(char *map, t_info *info);
 void            initinfo(t_info *info);
 void    		initinfo2(t_info *info);
+void			initinfo3(t_info *info, char *map_name);
+static void		init_texture(t_info *info);
+static void		init_dirplane(t_info *info, int idx);
+void			init_player(t_info *info);
+void			init_raycasting_info(t_info *info, t_ray *r, int x);
+void			init_side_dist(t_info *info, t_ray *r);
+void			init_perp_dist(t_info *info, t_ray *r);
+void			init_draw_ypoints(t_ray *r);
+
 int             stockinfo(char *str, t_info *info);
 int             findoc(char *str, char oc);
 unsigned int    countnl(char *map);
@@ -175,37 +165,25 @@ int             stockmap(char *str, t_info *info);
 int             checkspawn(char pos, int i, int j, t_info *info);
 int             parsemap(char *map, t_info *info);
 
-void			init2(t_info *info);
-void			init3(t_info *info);
-void			init_more(t_info *info);
-void			init_texture(t_info *info);
-void			init_sprite(t_info *info);
-void			init_sprite2(t_info *info, int i, int j, int v);
-void			init_dir(t_info *info);
-int				init_mlx(t_info *info);
-int				raycasting(t_info *info);
-void			get_texture(t_info *info);
-void			get_texture_adress(t_info *info);
-void			stepsidedist(t_info *info);
-void			incrementray(t_info *info);
-void			drawstartend(t_info *info);
-void			swap(t_info *info);
+void			my_mlx_pixel_put(t_info *info, int x, int y, int color);
+static void		paint_bg(t_info *info);
+static void		paint_walls(t_info *info, t_texture *texture, t_ray *r, int x);
+static void		painting(t_info *info, t_ray *r, int x);
+int				paint_map(t_info *info);
+void			raycasting(t_info *info, t_ray *r);
 
-void			forward_back(t_info *info);
-void			left_right(t_info *info);
-void			rotate_right_left(t_info *info);
-void			rotate_left(t_info *info, double olddirx);
-int				key_press(int keycode, t_info *info);
-int				key_release(int keycode, t_info *info);
+static void		adjust_pos_range(t_info *info);
+int				key_hook(int keycode, t_info *info);
+void			move_up(t_info *info);
+void			move_down(t_info *info);
+void			move_left(t_info *info);
+void			move_right(t_info *info);
+void			rotate_left(t_info *info);
+void			rotate_right(t_info *info);
 
-int				color_column(t_info *info);
-void			draw_texture(t_info *info, int x, int y);
-void			draw_sprite(t_info *info, int y, int texx, int stripe);
-
-void			dist_order2(t_info *info);
-void			dist_order(t_info *info);
-void			calculs(t_info *info, int i);
-void			sprite(t_info *info);
+static int		is_redrange(t_info *info, int w, int h);
+static void		painting_minimap(t_info *info, int w, int h);
+void			paint_minimap(t_info *info, int width, int height);
 
 void			error(t_info *info, char *str);
 void			error2(t_info *info);
